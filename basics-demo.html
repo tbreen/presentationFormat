@@ -1,0 +1,47 @@
+<html ng-app>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <link rel="stylesheet" href="css/elf.css" id="theme">
+  </head>
+  <style>
+  .done-true {
+    text-decoration: line-through;
+    color: grey;
+  }
+
+  .unstyled {
+    list-style-type: none;
+  }
+
+  .unstyled li {
+    margin-bottom: 10px;
+  }
+  </style>
+  <script>
+function TodoCtrl($scope) {
+  $scope.todos = [
+    {text:'learn angular', done:true},
+    {text:'build an angular app', done:false}];
+
+$scope.remaining = function() {
+        var count = 0;
+        angular.forEach($scope.todos, function(todo) {
+          count += todo.done ? 0 : 1;
+        });
+        return count;
+    };
+  }
+  </script>
+  <body>
+    <h2>Todo</h2>
+    <div class="demo-wrap" ng-controller="TodoCtrl">
+      <span>{{remaining()}} of {{todos.length}} remaining</span>
+      <ul class="unstyled">
+        <li ng-repeat="todo in todos">
+          <input type="checkbox" ng-model="todo.done">
+          <span class="done-{{todo.done}}">{{todo.text}}</span>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>

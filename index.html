@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+
+<title>Angular JS</title>
+
+<meta name="description" content="">
+<meta name="author" content="Stephen Tudor">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="stylesheet" href="css/elf.css" id="theme">
+
+<!-- If use the PDF print sheet so students can print slides-->
+<link rel="stylesheet" href="css/pdf.css" type="text/css" media="print">
+
+<script src="js/head.js"></script>
+</head>
+
+<body>
+
+<div class="reveal">
+
+    <!-- Any section element inside of this container is displayed as a slide-->
+    <div class="slides">
+        <!-- Opening slide -->
+        <section>
+            <img src="img/AngularJS-large.png" style="height:50%;">
+            <h1>Angular JS</h1>
+            <h3>HTML enhanced for web apps!</h3>
+        </section>
+
+        <section>
+            <h2>Single Page Application Framework</h2>
+            <img src="img/Ihasahotdog_MudSpa.jpg" style="height:50%;">
+        </section>
+
+        <!-- Configuration Management-->
+        <section>
+            <h3>Challenges with Single Page Application Frameworks</h3>
+            <ul>
+                <li>DOM Manipulation</li>
+                <li>History</li>
+                <li>Module Loading</li>
+                <li>Routing</li>
+                <li>Caching</li>
+                <li>Object Modeling</li>
+                <li>Data Binding</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>AngularJS provides a robust "SPA" framework for building robust client-centric applications</h3>
+            <img src="img/34222752.jpg" style="height:50%;">
+        </section>
+
+        <!-- Twitter Bower-->
+        <section>
+            <h2>Advantages of Angular</h2>
+            <ul>
+                <li>Entirely client-side, so anywhere JavaScript can run, AngularJS can run</li>
+                <li>Extend HTML vocabulary for your application</li>
+                <li>2-way Data Binding</li>
+                <li>Angular runs right out of the box with no library dependencies</li>
+                <li>Getting started with AngularJS is incredibly easy</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Hello World</h2>
+            <pre><code>&lt;html ng-app&gt;
+    &lt;head&gt;
+        &lt;script src="http://code.angularjs.org/angular-1.0.0rc10.min.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;div&gt;
+          &lt;label&gt;Name:&lt;/label&gt;
+          &lt;input type="text" ng-model="yourName" placeholder="Enter a name here"&gt;
+          &lt;hr&gt;
+          &lt;h1&gt;Hello, {{yourName}}!&lt;/h1&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </section>
+
+        <section>
+            <h2>Directives</h2>
+            <h3>Teach an Old Dog New Tricks</h3>
+            <img src="img/Dogtrick.jpg" style="height:50%;">
+        </section>
+
+        <section>
+            <h3>Angular uses directives to plug <br/>its action into the page.</h3>
+            <br/>
+            <ul>
+                <li><strong>ng-app:</strong> Entry point of Angular to the page.</li>
+                <li><strong>ng-bind:</strong> Changes text of an element to the value of an expression</li>
+                <li><strong>ng-controller:</strong> Specifies the JavaScript class for the given action</li>
+                <li><strong>ng-repeat:</strong> Creates the very clean loop structures in your page.</li>
+            </ul>
+        </section>
+
+        <section>
+            <br/><br/><br/><br/>
+            <h2>Ok, but let's get started</h2>
+        </section>
+        
+
+        <!-- bower.json Example-->
+        <section>
+            <p>Add the ng-app directive to the <html> tag</p>
+            <pre><code>&lt; html lang='en' ng-app&gt;</code></pre>
+            <br/>
+            <p>Add the Angular &lt; script &gt; tag to the end of your <head> tag:</p>
+            <pre><code>&lt;head&gt;...meta and stylesheet tags...
+&lt;script src="lib/angular/angular.js" &gt;&lt;/script&gt;</code></pre>
+        </section>
+
+        <section>
+            <p>The name of the Javascript class in the controller tells Angular what code to run</p>
+            <pre><code>&lt;div ng-controller="TodoCtrl"&gt;</code></pre>
+            <br/>
+            <p>ng-repeat is a repeater directive that loops through the current collection and does the specified action</p>
+            <pre><code> &lt;ul class="unstyled"&gt;
+    &lt;li ng-repeat="todo in todos"&gt;
+        &lt;input type="checkbox" ng-model="todo.done"&gt;
+        &lt;span class="done-{{todo.done}}"&gt;{{todo.text}}&lt;/span&gt;
+    &lt/li&gt;
+&lt;/ul&gt;</code></pre>
+        </section>
+
+        <!-- ERb-->
+        <section>
+            <h3>Sprinkle a little Javascript in</h3>
+<pre><code>function TodoCtrl($scope) {
+  $scope.todos = [
+    {text:'learn angular', done:true},
+    {text:'build an angular app', done:false}];
+
+    $scope.remaining = function() {
+        var count = 0;
+        angular.forEach($scope.todos, function(todo) {
+          count += todo.done ? 0 : 1;
+        });
+        return count;
+    };
+}
+</code></pre>
+        </section>
+
+        <section>
+            <h3>Mix in some css</h3>
+<pre><code>.done-true {
+  text-decoration: line-through;
+  color: grey;
+}
+</code></pre>
+        </section>
+
+        <section>
+            <h3>Let's Keep going</h3>
+<pre><code>&lt;form ng-submit="addTodo()"&gt;
+        &lt;input type="text" ng-model="todoText"  size="30"
+               placeholder="add new todo here"&gt;
+        &lt;input class="btn-primary" type="submit" value="add"&gt;
+&lt;/form&gt;
+</code></pre>
+
+<pre><code>
+$scope.addTodo = function() {
+    $scope.todos.push({text:$scope.todoText, done:false});
+    $scope.todoText = '';
+  };
+  </code></pre>
+        </section>
+
+
+        <!-- The Parts-->
+        <section>
+            <h3>Further Reading</h3>
+            <ul>
+                <li>http://angularjs.org</li>
+                <li>http://www.youtube.com/watch?v=i9MHigUZKEM</li>
+                <li>http://builtwith.angularjs.org/</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>The End</h3>
+            <img src="img/original.gif" style="height:50%;">
+        </section>
+
+    </div>
+
+    <footer>
+        <div class="copyright">
+            HTML/CSS ~ EPAM Empathy Lab ~
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-nc/3.0/80x15.png" /></a>
+        </div>
+    </footer>
+</div>
+
+
+<script src="js/reveal.js"></script>
+
+<script>
+
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+        { src: 'js/classList.js', condition: function() { return !document.body.classList; } },
+        { src: 'js/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'js/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        { src: 'js/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+        { src: 'js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+        { src: 'js/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+});
+
+</script>
+
+</body>
+</html>
+
