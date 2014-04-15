@@ -1,0 +1,179 @@
+EPAM Cloud VM Creation
+
+To begin you need to download the Maestro-CLI tool from the EPAM Cloud Center webpage
+
+https://kb.epam.com/display/EPMCITFAQ/Maestro+CLI+Tools
+
+
+Once installed, verify that you have the correct permissions to use the CLI
+
+> or2access
+
+You have to provide your account credentials. Please enter your PMC name for authorization via PMC
+or enter your Windows name for authorization via Active Directory: user_name
+Please enter your password: ********
+default.cr generated.
+Response:
+
+
+====================================================
+ name       | pwd                                  |
+====================================================
+ Chris Cook | ********-****-****-****-************ |
+----------------------------------------------------
+
+
+Next you'll need to verify if your project is already configured to use the cloud.
+
+> or2dreg -p PROJ-CODE
+
+The project with code PROJ-CODE is not found. Please check your spelling or provide a valid project code.
+
+If you get the above message, then the project is not yet configured.  You will need to send an email to help_desk@epam.com and request that the project be setup and that you have permissions to create VMs for it.  You'll need to send them the project code and specify which service region you want it in. This will usually be 'EPAM-US1'
+
+For a reference list of Service Regions and VM templates:  https://kb.epam.com/display/EPMCITFAQ/Order+Virtual+Server
+
+> or2dreg -p PROJ-CODE
+
+===========
+ id       |
+===========
+ EPAM-US1 |
+-----------
+
+Once you have the proper access and are setup in a Service Region, get a list of available VM Shapes
+
+> or2dshape -p PROJ-CODE -r EPAM-US1
+
+===========================
+ name   | cpu | memory_MB |
+===========================
+ SMALL  | 1   | 1740      |
+---------------------------
+ MEDIUM | 2   | 3840      |
+---------------------------
+ LARGE  | 2   | 7680      |
+---------------------------
+
+Also get a list of the available machine images:
+
+> or2dim -p PROJ-CODE -r EPAM-US1
+
+========================================================================================================
+ id                    | description                                    | group      | size_MB | state |
+========================================================================================================
+ W2012Std              | Windows Server 2012 Standard Edition           | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ W2k3R2Std-32          | Windows Server 2003 R2 32-bit Standard Edition | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ W2k3R2Std-64          | Windows Server 2003 R2 64-bit Standard Edition | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ W2k8R2Std             | Windows Server 2008 R2 Standard Edition        | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ Win7-32               | Windows 7 32-bit Enterprise                    | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ Win7-64               | Windows 7 64-bit Enterprise                    | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ Win8-32               | Windows 8 32-bit Enterprise                    | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ Win8-64               | Windows 8 64-bit Enterprise                    | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ Win8.1-64             | Windows 8.1 64-bit Enterprise                  | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ WinXP-32              | Windows XP Professional 32-bit                 | enterprise | 0       | ready |
+--------------------------------------------------------------------------------------------------------
+ CentOS5-template      | Linux CentOS 5.9 64-bit                        | public     | 3020    | ready |
+--------------------------------------------------------------------------------------------------------
+ CentOS6-template      | Linux CentOS 6.4 64-bit                        | public     | 3010    | ready |
+--------------------------------------------------------------------------------------------------------
+ CentOS6_32-bit        | Linux CentOS 6.4 32-bit                        | public     | 2251    | ready |
+--------------------------------------------------------------------------------------------------------
+ OracleLinux6-template | Oracle Linux 6 64-bit                          | public     | 3001    | ready |
+--------------------------------------------------------------------------------------------------------
+ Ubuntu10.04_32-bit    | Ubuntu 10.04 32-bit                            | public     | 2071    | ready |
+--------------------------------------------------------------------------------------------------------
+ Ubuntu10.04_64-bit    | Ubuntu 10.04 64-bit                            | public     | 2234    | ready |
+--------------------------------------------------------------------------------------------------------
+ Ubuntu12.04-template  | Linux Ubuntu 12.04 64-bit                      | public     | 3270    | ready |
+--------------------------------------------------------------------------------------------------------
+
+You need to select a shape and an image for your VM and enter the following command to launch the VM:
+The -c parameter is the count of VMs that need to be created.  So if you need 3 VMs: '-c 3'
+Each VM will take several minutes to instantiate (25 min for Windows servers and 10 min for others)
+
+> or2run -p PROJ-CODE -r EPAM-US1 -s SMALL -i CentOS6-template -c 1 
+or
+> or2run -p PROJ-CODE -r EPAM-US1 -s MEDIUM -i W2012R2Std -c 1
+
+====================================================================================================
+ instanceID    | dnsName | privateIP | state    | guestOS | owner      | image            | shape  |
+====================================================================================================
+ EVUSPRISD03E1 |         |           | starting |         | Chris Cook | CentOS6-template | MEDIUM |
+----------------------------------------------------------------------------------------------------
+
+Note the instanceID for your servers.  Once the servers are up and running, you'll get a confirmation email.  You need to wait for the servers to start before proceeding.
+
+Once your server is up and running, you'll probably want to know it's IP address:
+
+> or2din -p PROJ-CODE -r EPAM-US1 -i EVUSPRISD03E1 
+
+=====================================================================================================================
+ instanceID    | dnsName       | privateIP     | state   | guestOS         | owner      | image            | shape  |
+=====================================================================================================================
+ EVUSPRISD03E1 | EVUSPRISD03E1 | 10.244.129.31 | running | RHEL 6 (64-bit) | Chris Cook | CentOS6-template | MEDIUM |
+---------------------------------------------------------------------------------------------------------------------
+
+or 
+
+> or2din -p CAPS-NREQ -r EPAM-US1 -i EVUSPRISD082D
+
+==================================================================================================================================================
+ instanceID    | dnsName                          | privateIP     | state   | guestOS                         | owner      | image      | shape  |
+==================================================================================================================================================
+ EVUSPRISD082D | EVUSPRISD082D.princeton.epam.com | 10.244.129.21 | running | MS Windows Server 2012 (64-bit) | Chris Cook | W2012R2Std | MEDIUM |
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+This is a good time to mention that IP addresses are not static by default.  So in general you should try to reference the server by its DNS name.  By default this server will only be accessable within the EPAM netowrk.  If your project requires expernal access, you'll want to coordinate that with the help desk or a build engineer.
+
+For Windows servers, you can now RDP into them and configure them in whatever way you need.
+
+For Linux servers you can SSH into them right away.  However, for the Linux servers there are a number of preconfigured roles that you can apply to the server that will automatically install a particular tech stack.  A list of the auto-configurable roles:  https://kb.epam.com/display/EPMCITFAQ/Roles
+
+To use one of these auto-configuration roles, first you'll need to stop the server...
+
+> or2stop -p UBS-104 -r EPAM-US1 -i EVUSPRISD03E1
+
+=======================================================================================
+ instanceID    | dnsName       | privateIP     | state    | created                   |
+=======================================================================================
+ EVUSPRISD03E1 | EVUSPRISD03E1 | 10.244.129.31 | stopping | 2014-01-28T15:55:41+00:00 |
+---------------------------------------------------------------------------------------
+
+Then set its instance properties with the particular role and attributes:
+
+> or2-set-instance-properties -p UBS-104 -r EPAM-US1 -i EVUSPRISD03E1 -t "ep_chefrole=lamp" -t \ "ep_chefattributes=apache.default_site_enabled=true"
+
+======================================================================================
+ resource      | resourceType | name              | value                            |
+======================================================================================
+ EVUSPRISD03E1 | instance     | ep_chefrole       | lamp                             |
+--------------------------------------------------------------------------------------
+ EVUSPRISD03E1 | instance     | ep_chefattributes | apache.default_site_enabled=true |
+--------------------------------------------------------------------------------------
+
+And then restart the server:
+
+> or2start -p UBS-104 -r EPAM-US1 -i EVUSPRISD03E1
+
+===========================
+ instanceID    | state    |
+===========================
+ EVUSPRISD03E1 | starting |
+---------------------------
+
+
+
+
+
+
+
